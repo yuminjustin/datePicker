@@ -6,9 +6,13 @@ datePicker
 
 配置如下
 
+
 var d = new datePicker({
+
       week: "日,一,二,三,四,五,六",  //星期标识
+      
       submit: "确定"  //确定按钮的文案
+      
 });
 
 使用：
@@ -20,7 +24,9 @@ var d = new datePicker({
   在代码中建立绑定事件
   
   document.getElementById("XX").onclick = function(event){
+  
       d.picker(this,event);
+      
   }
   
   或者使用addEventListener去绑定
