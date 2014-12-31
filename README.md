@@ -2,6 +2,8 @@ datePicker
 ==========
 ###版本：1.0；
 
+[image]: http://yuminjustin.cn/uploadfile/2014/1231/20141231055421706.png "prewview" 
+
 ###日期选择器，针对手机而制作，配置简单；
 
 ###配置如下：
