@@ -30,5 +30,4 @@ datePicker
   
 或者使用addEventListener去绑定
 <hr/>
-###以后版本将暴露颜色属性的参数和增加取消关闭事件
 ###详细：http://yuminjustin.cn/html/plugin/2015/0103/10.html
