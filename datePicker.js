@@ -1,7 +1,8 @@
 /*version:1.1*/ 
-! function () {
-    var a = function (a) {
-        this.d = new Date, this.c = {
+(function () {
+    var datePicker = function (c) {
+        this.d = new Date();
+        this.c = {
             week: "S,M,T,W,T,F,S",
             submit: "OK",
             color: {
@@ -20,137 +21,259 @@
                 todaybg: "#f00",
                 todayc: "#fff"
             }
-        }, a && ("" != a.week && (this.c.week = a.week), "" != a.submit && (this.c.submit = a.submit), a.color && 14 == a.color.length && (this.c.color = a.color)), b(this), c(this)
-    };
-    a.prototype.picker = function (a) {
-        a.blur(), this.o.style.display = "block", this.target = a
-    };
-    var b = function (a) {
-            a.c.year = a.d.getFullYear(), a.c.month = a.d.getMonth(), a.c.day = a.d.getDate(), a.c.weekday = a.d.getDay()
+        }
+        if (c) {
+            if (c.week != "") this.c.week = c.week;
+            if (c.submit != "") this.c.submit = c.submit;
+            if (c.color && c.color.length == 14) this.c.color = c.color;
+        }
+        rollBack(this);
+        init(this);
+    }
+    datePicker.prototype.picker = function (o) {
+        o.blur();
+        this.o.style.display = "block";
+        this.target = o;
+    }
+    var rollBack = function (o) {
+        o.c.year = o.d.getFullYear();
+        o.c.month = o.d.getMonth();
+        o.c.day = o.d.getDate()
+        o.c.weekday = o.d.getDay();
+    }
+    var init = function (t) {
+        t.o = document.createElement("div");
+        t.o.id = "datePickerShadow";
+        document.body.appendChild(t.o);
+        template.shadowCss(t.o);
+        t.o.innerHTML = template.shadowBlock();
+        template.shadowBlockCsss(document.getElementById("datePickerBlock"));
+        t.o.innerHTML += template.stage();
+        t.stage = document.getElementById("dataPicker");
+        template.stageCss(t.stage, t.c.color);
+        t.stage.innerHTML = template.header(t.c);
+        template.headerCss(document.getElementById("dPHeader"), t.c.color);
+        t.stage.innerHTML += template.weekBar(t.c.week);
+        template.weekBarCss(document.getElementById("weekBar"), t.c.color);
+        t.stage.innerHTML += template.weekList();
+        template.weekListCss(document.getElementById("weekList"), t.c.color);
+        calendarMaker(t);
+        events(t);
+    }
+    var template = {
+        shadowCss: function (o) {
+            o.style.cssText = "width: 100%; height: 100%;position: fixed;background: rgba(0,0,0,.5);top:0;left:0;display:none;";
         },
-        c = function (a) {
-            a.o = document.createElement("div"), a.o.id = "datePickerShadow", document.body.appendChild(a.o), d.shadowCss(a.o), a.o.innerHTML = d.shadowBlock(), d.shadowBlockCsss(document.getElementById("datePickerBlock")), a.o.innerHTML += d.stage(), a.stage = document.getElementById("dataPicker"), d.stageCss(a.stage, a.c.color), a.stage.innerHTML = d.header(a.c), d.headerCss(document.getElementById("dPHeader"), a.c.color), a.stage.innerHTML += d.weekBar(a.c.week), d.weekBarCss(document.getElementById("weekBar"), a.c.color), a.stage.innerHTML += d.weekList(), d.weekListCss(document.getElementById("weekList"), a.c.color), e(a), f(a)
+        shadowBlock: function () {
+            return '<div id="datePickerBlock"></div>';
         },
-        d = {
-            shadowCss: function (a) {
-                a.style.cssText = "width: 100%; height: 100%;position: fixed;background: rgba(0,0,0,.5);top:0;left:0;display:none;"
-            },
-            shadowBlock: function () {
-                return '<div id="datePickerBlock"></div>'
-            },
-            shadowBlockCsss: function (a) {
-                a.style.cssText = "width: 100%; height: 100%;position:absolute;top:0;left:0;z-index:1;"
-            },
-            stage: function () {
-                return '<div id="dataPicker"></div>'
-            },
-            stageCss: function (a, b) {
-                a.style.cssText = "width: 96%;overflow: hidden;height: auto;min-height: 50%;background:" + b.sbg + ";color:" + b.sc + ";position: absolute;bottom: 0;padding: 10px 2%;z-index: 999;z-index:2;"
-            },
-            header: function (a) {
-                return '<div class="dPHeader" id="dPHeader"><div class="dPHBox"><span class="dPc" id="Ycut">-</span><span id="dPYear">' + a.year + '</span><span class="dPc" id="Yplus">+</span></div><div class="dPHBox"><span class="dPc" id="Mcut">-</span><span id="dPMonth">' + (a.month + 1) + '</span><span class="dPc" id="Mplus">+</span></div><div class="dPHBox"><span id="dPDay">' + a.day + '</span></div><button id="dPSave">' + a.submit + "</button></div>"
-            },
-            headerCss: function (a, b) {
-                var c = a.getElementsByClassName("dPHBox"),
-                    d = "display: block;float: left;height: 22px; line-height: 22px;margin: 4px;";
-                a.style.cssText = "width: 100%; height: 30px; line-height: 30px;", document.getElementById("dPSave").style.cssText = d + "background:" + b.subbg + "; float: right; border: none; padding: 0 8px;color:" + b.subc;
-                for (var e = 0; e < c.length; e++) {
-                    c[e].style.cssText = "float: left;overflow: hidden;";
-                    for (var f = c[e].getElementsByTagName("span"), g = 0; g < f.length; g++) f[g].style.cssText = d;
-                    for (var h = c[e].getElementsByClassName("dPc"), g = 0; g < h.length; g++) h[g].style.cssText += "width: 22px; text-align: center; background:" + b.cbg + "; border-radius: 11px; font-weight: bold;color:" + b.cc
+        shadowBlockCsss: function (o) {
+            o.style.cssText = "width: 100%; height: 100%;position:absolute;top:0;left:0;z-index:1;";
+        },
+        stage: function () {
+            return '<div id="dataPicker"></div>';
+        },
+        stageCss: function (o, c) {
+            o.style.cssText = "width: 96%;overflow: hidden;height: auto;min-height: 50%;background:" + c.sbg + ";color:" + c.sc + ";position: absolute;bottom: 0;padding: 10px 2%;z-index: 999;z-index:2;";
+        },
+        header: function (o) {
+            return '<div class="dPHeader" id="dPHeader"><div class="dPHBox"><span class="dPc" id="Ycut">-</span><span id="dPYear">' + o.year + '</span><span class="dPc" id="Yplus">+</span></div><div class="dPHBox"><span class="dPc" id="Mcut">-</span><span id="dPMonth">' + (o.month + 1) + '</span><span class="dPc" id="Mplus">+</span></div><div class="dPHBox"><span id="dPDay">' + o.day + '</span></div><button id="dPSave">' + o.submit + '</button></div>';
+        },
+        headerCss: function (o, c) {
+            var box = o.getElementsByClassName("dPHBox");
+            var css1 = "display: block;float: left;height: 22px; line-height: 22px;margin: 4px;"
+            o.style.cssText = "width: 100%; height: 30px; line-height: 30px;";
+            document.getElementById("dPSave").style.cssText = css1 + "background:" + c.subbg + "; float: right; border: none; padding: 0 8px;color:" + c.subc;
+            for (var i = 0; i < box.length; i++) {
+                box[i].style.cssText = "float: left;overflow: hidden;";
+                var spans = box[i].getElementsByTagName("span");
+                for (var j = 0; j < spans.length; j++) {
+                    spans[j].style.cssText = css1;
                 }
-            },
-            weekBar: function (a) {
-                for (var b = a.split(","), c = '<div class="dPWeek" id="weekBar">', d = 0; 7 > d; d++) c += "<span>" + b[d] + "</span>";
-                return c + "</div>"
-            },
-            weekBarCss: function (a, b) {
-                a.style.cssText = "margin:0 auto;width: 100%; height: 30px; line-height: 30px;";
-                for (var c = a.getElementsByTagName("span"), d = 0; d < c.length; d++) c[d].style.cssText = "width: 14.2%; display: block;float: left; text-align: center; color:" + b.weekBarc + ";font-weight: bold;background:" + b.weekBarbg
-            },
-            weekList: function () {
-                return '<div id="weekList"></div>'
-            },
-            weekListCss: function (a) {
-                a.style.cssText = "margin:0 auto;overflow: hidden;"
-            },
-            weekListInner: function (a) {
-                for (var b = "", c = 0; c < a.length; c++) b += a[c] ? "<span>" + a[c] + "</span>" : "<span>&nbsp;</span>";
-                return b
-            },
-            weekListInnerCss: function (a, b, c) {
-                for (var d = 0; d < a.length; d++) a[d].style.cssText = "width: 14.2%; display: block;float: left; text-align: center; color:" + c.normalc + ";height: 30px;line-height: 30px;margin-top: 2px;background:" + c.normalbg, d % 7 && (d + 1) % 7 || (a[d].style.cssText += "background:" + c.weekendbg, a[d].setAttribute("weekend", "y")), a[d].innerHTML == b && this.click(a[d], c), parseInt(a[d].innerHTML) || (a[d].style.background = c.emptybg)
-            },
-            click: function (a, b) {
-                var c = document.getElementById("weekList"),
-                    d = "xon",
-                    e = c.getElementsByClassName(d);
-                e[0] && (e[0].style.background = e[0].getAttribute("weekend") ? b.weekendbg : b.normalbg, e[0].style.color = b.normalc, e[0].className = ""), a.className = d, a.style.cssText += "background:" + b.todaybg + ";color:" + b.todayc
+                var dPcs = box[i].getElementsByClassName("dPc");
+                for (var j = 0; j < dPcs.length; j++) {
+                    dPcs[j].style.cssText += "width: 22px; text-align: center; background:" + c.cbg + "; border-radius: 11px; font-weight: bold;color:" + c.cc;
+                }
             }
         },
-        e = function (a) {
-            var b = a,
-                c = document.getElementById("weekList"),
-                e = g(b.c),
-                f = d.weekListInner(e);
-            c.innerHTML = f, d.weekListInnerCss(c.getElementsByTagName("span"), b.c.day, b.c.color), document.getElementById("dPYear").innerHTML = b.c.year, document.getElementById("dPMonth").innerHTML = function () {
-                return h(b.c.month + 1)
-            }(), document.getElementById("dPDay").innerHTML = function () {
-                return h(b.c.day)
-            }()
+        weekBar: function (o) {
+            var arr = o.split(",");
+            var htm = '<div class="dPWeek" id="weekBar">';
+            for (var i = 0; i < 7; i++) {
+                htm += "<span>" + arr[i] + "</span>";
+            }
+            return htm + "</div>";
         },
-        f = function (a) {
-            var c = a,
-                f = document.getElementById("Ycut"),
-                g = document.getElementById("Yplus"),
-                i = document.getElementById("dPYear"),
-                j = document.getElementById("Mcut"),
-                k = document.getElementById("Mplus"),
-                l = document.getElementById("dPMonth"),
-                m = document.getElementById("dPDay"),
-                n = document.getElementById("dPSave"),
-                o = document.getElementById("weekList"),
-                p = document.getElementById("datePickerBlock"),
-                q = function () {
-                    c.c.day = 1, m.innerHTML = "01"
-                };
-            f.onclick = function () {
-                i.innerHTML = c.c.year = parseInt(i.innerHTML) - 1, q(), e(c)
-            }, g.onclick = function () {
-                i.innerHTML = c.c.year = parseInt(i.innerHTML) + 1, q(), e(c)
-            }, j.onclick = function () {
-                var a = parseInt(l.innerHTML) - 1;
-                a || (a = 12, c.c.year--), c.c.month = a - 1, l.innerHTML = h(a), q(), e(c)
-            }, k.onclick = function () {
-                var a = parseInt(l.innerHTML) + 1;
-                13 == a && (a = 1, c.c.year++), c.c.month = a - 1, l.innerHTML = h(a), q(), e(c)
-            }, o.onclick = function (a) {
-                if (a.target && parseInt(a.target.innerHTML)) {
-                    var b = parseInt(a.target.innerHTML);
-                    c.c.day = b, m.innerHTML = h(b), d.click(a.target, c.c.color)
-                }
-            }, n.onclick = function () {
-                var a = i.innerHTML + "-" + l.innerHTML + "-" + m.innerHTML;
-                c.target.value = a, c.o.style.display = "none", b(c), e(c)
-            }, p.onclick = function () {
-                c.o.style.display = "none", b(c), e(c)
+        weekBarCss: function (o, c) {
+            o.style.cssText = "margin:0 auto;width: 100%; height: 30px; line-height: 30px;"
+            var spans = o.getElementsByTagName("span");
+            for (var i = 0; i < spans.length; i++) {
+                spans[i].style.cssText = "width: 14.2%; display: block;float: left; text-align: center; color:" + c.weekBarc + ";font-weight: bold;background:" + c.weekBarbg;
             }
         },
-        g = function (a) {
-            var b = a.year % 4,
-                c = new Date,
-                d = [],
-                e = [],
-                f = 0;
-            c.setFullYear(a.year), c.setMonth(a.month, 1), f = c.getDay();
-            for (var g = 0; 12 > g; g++) 7 > g ? (d[g] = g % 2 ? 30 : 31, 1 == g && b && (d[g] = 28), 1 != g || b || (d[g] = 29)) : d[g] = g % 2 ? 31 : 30;
-            for (var g = 0; g < d[a.month]; g++) e[g] = g + 1;
-            for (var g = 0; f > g; g++) e.unshift(0);
-            for (var g = 0; g < e.length % 7; g++) e.push(0);
-            return e
+        weekList: function () {
+            return '<div id="weekList"></div>';
         },
-        h = function (a) {
-            return parseInt(a) < 10 && (a = "0" + a), a
-        };
-    window.datePicker = a
-}();
+        weekListCss: function (o) {
+            o.style.cssText = "margin:0 auto;overflow: hidden;";
+        },
+        weekListInner: function (a) {
+            var htm = "";
+            for (var i = 0; i < a.length; i++) {
+                if (a[i]) htm += "<span>" + a[i] + "</span>";
+                else htm += "<span>&nbsp;</span>";
+            }
+            return htm;
+        },
+        weekListInnerCss: function (l, today, c) {
+            for (var i = 0; i < l.length; i++) {
+                l[i].style.cssText = "width: 14.2%; display: block;float: left; text-align: center; color:" + c.normalc + ";height: 30px;line-height: 30px;margin-top: 2px;background:" + c.normalbg;
+                if (!(i % 7) || !((i + 1) % 7)) {
+                    l[i].style.cssText += "background:" + c.weekendbg;
+                    l[i].setAttribute("weekend", "y");
+                }
+                if (l[i].innerHTML == today)
+                    this.click(l[i], c);
+                if (!parseInt(l[i].innerHTML))
+                    l[i].style.background = c.emptybg;
+            }
+        },
+        click: function (o, c) {
+            var f = document.getElementById("weekList");
+            var on = "xon";
+            var onl = f.getElementsByClassName(on);
+            if (onl[0]) {
+                if (onl[0].getAttribute("weekend"))
+                    onl[0].style.background = c.weekendbg;
+                else
+                    onl[0].style.background = c.normalbg;
+                onl[0].style.color = c.normalc;
+                onl[0].className = "";
+            }
+            o.className = on;
+            o.style.cssText += "background:" + c.todaybg + ";color:" + c.todayc;
+        }
+    }
+    var calendarMaker = function (o) {
+        var self = o;
+        var f = document.getElementById("weekList");
+        var re = monthArr(self.c);
+        var htm = template.weekListInner(re);
+        f.innerHTML = htm;
+        template.weekListInnerCss(f.getElementsByTagName("span"), self.c.day, self.c.color);
+        document.getElementById("dPYear").innerHTML = self.c.year;
+        document.getElementById("dPMonth").innerHTML = (function () {
+            return formate(self.c.month + 1);
+        })();
+        document.getElementById("dPDay").innerHTML = (function () {
+            return formate(self.c.day);
+        })();;
+    }
+    var events = function (o) {
+        var self = o;
+        var yc = document.getElementById("Ycut");
+        var yp = document.getElementById("Yplus");
+        var y = document.getElementById("dPYear");
+        var mc = document.getElementById("Mcut");
+        var mp = document.getElementById("Mplus");
+        var m = document.getElementById("dPMonth");
+        var d = document.getElementById("dPDay");
+        var s = document.getElementById("dPSave");
+        var w = document.getElementById("weekList");
+        var b = document.getElementById("datePickerBlock");
+        var fn = function () {
+            self.c.day = 1;
+            d.innerHTML = "01";
+        }
+        yc.onclick = function () {
+            y.innerHTML = self.c.year = parseInt(y.innerHTML) - 1;
+            fn();
+            calendarMaker(self);
+        }
+        yp.onclick = function () {
+            y.innerHTML = self.c.year = parseInt(y.innerHTML) + 1;
+            fn();
+            calendarMaker(self);
+        }
+        mc.onclick = function () {
+            var mm = parseInt(m.innerHTML) - 1;
+            if (!mm) {
+                mm = 12;
+                self.c.year--;
+            }
+            self.c.month = mm - 1;
+            m.innerHTML = formate(mm);
+            fn();
+            calendarMaker(self);
+        }
+        mp.onclick = function () {
+            var mm = parseInt(m.innerHTML) + 1;
+            if (mm == 13) {
+                mm = 1;
+                self.c.year++;
+            };
+            self.c.month = mm - 1;
+            m.innerHTML = formate(mm);
+            fn();
+            calendarMaker(self);
+        }
+        w.onclick = function (e) {
+            if (e.target) {
+                if (parseInt(e.target.innerHTML)) {
+                    var da = parseInt(e.target.innerHTML);
+                    self.c.day = da;
+                    d.innerHTML = formate(da);;
+                    template.click(e.target, self.c.color);
+                }
+            }
+        }
+        s.onclick = function () {
+            var str = y.innerHTML + "-" + m.innerHTML + "-" + d.innerHTML;
+            self.target.value = str;
+            self.o.style.display = "none";
+            rollBack(self);
+            calendarMaker(self);
+        }
+        b.onclick = function () {
+            self.o.style.display = "none";
+            rollBack(self);
+            calendarMaker(self);
+        }
+    }
+    var monthArr = function (o) {
+        var r = o.year % 4;
+        var d = new Date();
+        var arr = [],
+            arr2 = [];
+        var head = 0;
+        d.setFullYear(o.year);
+        d.setMonth(o.month, 1);
+        head = d.getDay();
+        for (var i = 0; i < 12; i++) {
+            if (i < 7) {
+                if (i % 2) arr[i] = 30;
+                else arr[i] = 31;
+                if (i == 1 && r) arr[i] = 28;
+                if (i == 1 && !r) arr[i] = 29;
+            } else {
+                if (i % 2) arr[i] = 31;
+                else arr[i] = 30;
+            }
+        }
+        for (var i = 0; i < arr[o.month]; i++) {
+            arr2[i] = i + 1;
+        }
+        for (var i = 0; i < head; i++) {
+            arr2.unshift(0);
+        }
+        for (var i = 0; i < arr2.length % 7; i++) {
+            arr2.push(0);
+        }
+        return arr2;
+    }
+    var formate = function (n) {
+        if (parseInt(n) < 10) n = "0" + n;
+        return n;
+    }
+    window.datePicker = datePicker;
+})();
