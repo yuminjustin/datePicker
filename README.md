@@ -30,4 +30,4 @@ datePicker
   
 或者使用addEventListener去绑定
 <hr/>
-###详细：http://yuminjustin.cn/html/plugin/2015/0103/10.html
+###详细：http://dwz.cn/IlYcR
