@@ -2,7 +2,7 @@ datePicker
 ==========
 ###版本：1.1；
 
-![datePicker](http://yuminjustin.cn/upload/20150919/20141231055421706.png "datePicker") 
+![datePicker](https://yuminjustin.github.io/resource/img/uploads/20141231055421706.png "datePicker") 
 
 ###日期选择器，针对手机而制作，配置简单；
 
@@ -14,7 +14,7 @@ datePicker
                       color:{}  //共有十四个颜色，详细参考代码
                   });
                   
-![datePicker2](http://yuminjustin.cn/upload/20150919/20150105113918855.jpg "datePicker2") 
+![datePicker2](https://yuminjustin.github.io/resource/img/uploads/20150105113918855.jpg "datePicker2") 
 
 ###使用：
 
@@ -30,4 +30,4 @@ datePicker
   
 或者使用addEventListener去绑定
 <hr/>
-###详细：http://dwz.cn/1JZbIP
+###详细：https://yuminjustin.github.io/?/arc/arcid:03/channel:arc
