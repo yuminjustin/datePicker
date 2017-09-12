@@ -1,5 +1,7 @@
 datePicker
 ==========
+#### 此插件不再维护 推荐使用成熟UI控件
+
 ###版本：1.1；
 
 ![datePicker](https://yuminjustin.github.io/resource/img/uploads/20141231055421706.png "datePicker") 
